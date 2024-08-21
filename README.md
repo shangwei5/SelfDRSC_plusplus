@@ -65,8 +65,9 @@ Please download the RS-GOPRO datasets from [GoogleDrive](https://drive.google.co
         |--video n
 ```
 
-## Download Pre-trained Model of SelfDRSC
-Please download the pre-trained RIFE from [link](https://pan.baidu.com/s/12gnAdEaJb1a_MaBuWhqPLg?pwd=pjdx)(password:pjdx). Please put these models to `./pretrained`.
+## Download Pre-trained Model of SelfDRSC++
+Please download the pre-trained RIFE from [BaiduDisk](https://pan.baidu.com/s/1RjLN2yOix94hg7m35HIFPA?pwd=b4kg)(password:b4kg) or [GoogleDrive](https://drive.google.com/drive/folders/1x1JSjlNzL1LfrgqxaEakVHrQDxxNVUjB?usp=sharing). Please put these models to `./pretrained`.
+Our results on the RS-GOPRO datasets and real demos can also be downloaded from [BaiduDisk](https://pan.baidu.com/s/1J9PjilYK522aEzoCsl96sg?pwd=gbfn)(password:gbfn).
 
 ## Getting Started
 ### 1) Testing
