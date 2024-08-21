@@ -106,5 +106,5 @@ If you use any part of our code, or SelfDRSC++ is useful for your research, plea
 If you have any questions, please contact csweishang@gmail.com.
 
 ## Acknowledgements
-This code is built on [SelfDRSC](https://github.com/shangwei5/SelfDRSC).
+This code is built on [SelfDRSC](https://github.com/shangwei5/SelfDRSC) and [InterpAny-Clearer](https://github.com/zzh-tech/InterpAny-Clearer). We thank the authors for sharing the codes.
 
