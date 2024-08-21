@@ -81,6 +81,7 @@ Please change `data_root` and `pretrained_netG` in options according to yours.
 python -m torch.distributed.launch --nproc_per_node=1 --master_port=1234 test_real.py --opt options/test_amt_rife_dr_rsflow_multi_real.json  --dist True
 ```
 Please change `data_root` and `pretrained_netG` in options according to yours.
+If you test on your own data, remember to change `self.H` and `self.W` in `./data/dataset_rsgopro_self_real.py`， They correspond to the height and width of the images respectively. If you want to generate a higher frame rate, you can change `test {'frames'}` in the JSON file.
 
 ### 2) Training
 ```
