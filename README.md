@@ -1,7 +1,7 @@
 # SelfDRSC++: Self-Supervised Learning for Dual Reversed Rolling Shutter Correction
 Under Review
 ---
-[[arXiv](https://arxiv.org/abs/2305.19862)]
+[[arXiv](https://arxiv.org/abs/2408.11411)]
 
 This repository is the official PyTorch implementation of SelfDRSC++: Self-supervised Learning for Dual Reversed Rolling Shutter Correction.
 
