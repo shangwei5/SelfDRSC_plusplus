@@ -93,6 +93,12 @@ Please change `data_root` and `pretrained_rsg` in options according to yours.
 ## Cite
 If you use any part of our code, or SelfDRSC++ is useful for your research, please consider citing:
 ```
+@article{shang2024selfdrsc++,
+  title={SelfDRSC++: Self-Supervised Learning for Dual Reversed Rolling Shutter Correction},
+  author={Shang, Wei and Ren, Dongwei and Zhang, Wanying and Wang, Qilong and Zhu, Pengfei and Zuo, Wangmeng},
+  journal={arXiv preprint arXiv:2408.11411},
+  year={2024}
+}
 @inproceedings{shang2023self,
   title={Self-supervised Learning to Bring Dual Reversed Rolling Shutter Images Alive},
   author={Shang, Wei and Ren, Dongwei and Feng, Chaoyu and Wang, Xiaotao and Lei, Lei and Zuo, Wangmeng},
