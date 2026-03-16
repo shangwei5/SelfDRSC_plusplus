@@ -220,4 +220,5 @@ def main(json_path='options/test_srsc_rsflow_multi_distillv2_psnr.json'):
     logger.info('Average SSIM : {:<.4f}\n'.format(avg_ssim))
 
 if __name__ == '__main__':
+    
     main()
