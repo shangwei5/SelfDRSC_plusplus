@@ -22,7 +22,6 @@ from data.utils import normalize, flow_to_image
 #     from distortion_prior import distortion_map
 from models.warplayer import warp
 
-
 class RSGOPRO(Dataset):
     """ Dataset class for RS-GOPRO"""
 
