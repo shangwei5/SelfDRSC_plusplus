@@ -693,3 +693,4 @@ class ModelSRSCRSG(ModelPlain):
     def info_params(self):
         msg = self.describe_params(self.netG)
         return msg
+        
