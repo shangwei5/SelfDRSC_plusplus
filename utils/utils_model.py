@@ -7,7 +7,6 @@ import glob
 import os
 
 
-
 def find_last_checkpoint(save_dir, net_type='G', pretrained_path=None):
 
     file_list = glob.glob(os.path.join(save_dir, '*_{}.pth'.format(net_type)))
