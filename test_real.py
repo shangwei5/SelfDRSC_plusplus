@@ -225,4 +225,5 @@ def main(json_path='options/test_srsc_rsflow_multi_distillv2_real.json'):
     # logger.info('Average PSNR : {:<.2f}dB\n'.format(avg_psnr))
 
 if __name__ == '__main__':
+    
     main()
