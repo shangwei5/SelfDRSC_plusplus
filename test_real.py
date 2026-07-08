@@ -18,6 +18,7 @@ from utils.utils_dist import get_dist_info, init_dist
 from models.select_model import define_Model
 
 from data.dataset_rsgopro_self_real import RSGOPRO as D
+from metrics.metric_utils import build_no_reference_models, calculate_no_reference_from_path
 
 '''
 # --------------------------------------------
@@ -44,9 +45,16 @@ def main(json_path='options/test_srsc_rsflow_multi_distillv2_real.json'):
     parser.add_argument('--launcher', default='pytorch', help='job launcher')
     parser.add_argument('--local_rank', type=int, default=0)
     parser.add_argument('--dist', default=False)
+    parser.add_argument('--calc_nr_metrics', action='store_true',
+                        help='Calculate no-reference metrics for real testing results.')
+    parser.add_argument('--nr_metrics', nargs='+', default=['niqe', 'nrqm', 'pi'],
+                        help='No-reference metrics supported by pyiqa.')
+    parser.add_argument('--nr_crop_border', type=int, default=20, help='Crop border for no-reference metrics.')
+    parser.add_argument('--metric_device', default='cuda', choices=['cuda', 'cpu'], help='Device for optional metrics.')
 
-    opt = option.parse(parser.parse_args().opt, is_train=True)
-    opt['dist'] = parser.parse_args().dist
+    args = parser.parse_args()
+    opt = option.parse(args.opt, is_train=True)
+    opt['dist'] = args.dist
 
     # ----------------------------------------
     # distributed settings
@@ -92,6 +100,12 @@ def main(json_path='options/test_srsc_rsflow_multi_distillv2_real.json'):
         utils_logger.logger_info(logger_name, os.path.join(opt['path']['log'], logger_name+'.log'))
         logger = logging.getLogger(logger_name)
         logger.info(option.dict2str(opt))
+
+    nr_metric_names = [name.lower() for name in args.nr_metrics]
+    nr_models = None
+    if args.calc_nr_metrics:
+        nr_models = build_no_reference_models(
+            nr_metric_names, device=args.metric_device, crop_border_value=args.nr_crop_border)
 
     # # ----------------------------------------
     # # seed
@@ -177,6 +191,7 @@ def main(json_path='options/test_srsc_rsflow_multi_distillv2_real.json'):
     '''
 
     # avg_psnr = 0.0
+    avg_nr_metrics = {name: 0.0 for name in nr_metric_names}
     idx = 0
 
     for test_data in test_loader:
@@ -198,11 +213,18 @@ def main(json_path='options/test_srsc_rsflow_multi_distillv2_real.json'):
         # H_img = util.tensor2uint_list(visuals['H'])
 
         # current_psnr = 0
+        current_nr_metrics = {name: 0.0 for name in nr_metric_names}
+        current_nr_count = 0
         for save_idx in range(len(E_img)):
             # image_name_ext = os.path.basename(test_data[7][save_idx][0])
             # img_name, ext = os.path.splitext(image_name_ext)
             save_img_path = os.path.join(img_dir, '{:s}_{:02d}.png'.format(img_name, save_idx)) #'E{:d}_{:d}.png'.format(save_idx,current_step)
             util.imsave(E_img[save_idx], save_img_path)
+            if nr_models is not None:
+                scores = calculate_no_reference_from_path(save_img_path, nr_models)
+                for name, score in scores.items():
+                    current_nr_metrics[name] += score
+                current_nr_count += 1
             # current_psnr += util.calculate_psnr(E_img[save_idx], H_img[save_idx], border=border)
         # -----------------------
         # calculate PSNR
@@ -215,7 +237,15 @@ def main(json_path='options/test_srsc_rsflow_multi_distillv2_real.json'):
             #     current_psnr = current_psnr + util.calculate_psnr(E_img[j], H_img[j], border=border)
         # current_psnr = current_psnr / len(E_img)
 
-        logger.info('{:->4d}--> {:>10s}'.format(idx, image_name_ext))
+        if nr_models is not None and current_nr_count > 0:
+            for name in nr_metric_names:
+                current_nr_metrics[name] = current_nr_metrics[name] / current_nr_count
+                avg_nr_metrics[name] += current_nr_metrics[name]
+            metric_msg = '  '.join(['{} {:.4f}'.format(name.upper(), current_nr_metrics[name])
+                                    for name in nr_metric_names])
+            logger.info('{:->4d}--> {:>10s} | {}'.format(idx, image_name_ext, metric_msg))
+        else:
+            logger.info('{:->4d}--> {:>10s}'.format(idx, image_name_ext))
 
         # avg_psnr += current_psnr
 
@@ -223,7 +253,11 @@ def main(json_path='options/test_srsc_rsflow_multi_distillv2_real.json'):
     #
     # # testing log
     # logger.info('Average PSNR : {:<.2f}dB\n'.format(avg_psnr))
+    if nr_models is not None and idx > 0:
+        for name in nr_metric_names:
+            logger.info('Average {} : {:<.4f}\n'.format(name.upper(), avg_nr_metrics[name] / idx))
 
 if __name__ == '__main__':
     
     main()
+
