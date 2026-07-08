@@ -18,7 +18,7 @@ from utils.utils_dist import get_dist_info, init_dist
 from models.select_model import define_Model
 
 from data.dataset_rsgopro_self import RSGOPRO as D
-
+from metrics.metric_utils import build_lpips_model, calculate_lpips_from_arrays
 
 
 def main(json_path='options/test_srsc_rsflow_multi_distillv2_psnr.json'):
@@ -34,6 +34,11 @@ def main(json_path='options/test_srsc_rsflow_multi_distillv2_psnr.json'):
     parser.add_argument('--launcher', default='pytorch', help='job launcher')
     parser.add_argument('--local_rank', type=int, default=0)
     parser.add_argument('--dist', default=False)
+    parser.add_argument('--calc_lpips', action='store_true', help='Calculate LPIPS during testing.')
+    parser.add_argument('--lpips_net', default='alex', choices=['alex', 'vgg', 'squeeze'], help='LPIPS backbone.')
+    parser.add_argument('--lpips_crop_border', type=int, default=0, help='Crop border for LPIPS.')
+    parser.add_argument('--metric_device', default='cuda', choices=['cuda', 'cpu'], help='Device for optional metrics.')
+
 
     opt = option.parse(parser.parse_args().opt, is_train=True)
     opt['dist'] = parser.parse_args().dist
@@ -82,6 +87,10 @@ def main(json_path='options/test_srsc_rsflow_multi_distillv2_psnr.json'):
         utils_logger.logger_info(logger_name, os.path.join(opt['path']['log'], logger_name+'.log'))
         logger = logging.getLogger(logger_name)
         logger.info(option.dict2str(opt))
+
+    lpips_model, lpips_device = None, None
+    if args.calc_lpips:
+        lpips_model, lpips_device = build_lpips_model(net=args.lpips_net, device=args.metric_device)
 
     # # ----------------------------------------
     # # seed
@@ -168,6 +177,7 @@ def main(json_path='options/test_srsc_rsflow_multi_distillv2_psnr.json'):
 
     avg_psnr = 0.0
     avg_ssim = 0.0
+    avg_lpips = 0.0
     idx = 0
 
     for test_data in test_loader:
@@ -188,6 +198,7 @@ def main(json_path='options/test_srsc_rsflow_multi_distillv2_psnr.json'):
 
         current_psnr = 0
         current_ssim = 0
+        current_lpips = 0
         for save_idx in range(len(E_img)):
             image_name_ext = os.path.basename(test_data[7][save_idx][0])
             img_name, ext = os.path.splitext(image_name_ext)
@@ -195,6 +206,10 @@ def main(json_path='options/test_srsc_rsflow_multi_distillv2_psnr.json'):
             util.imsave(E_img[save_idx], save_img_path)
             current_psnr += util.calculate_psnr(E_img[save_idx], H_img[save_idx])
             current_ssim += util.calculate_ssim(E_img[save_idx], H_img[save_idx])
+            if lpips_model is not None:
+                current_lpips += calculate_lpips_from_arrays(
+                    E_img[save_idx], H_img[save_idx], lpips_model, lpips_device,
+                    crop=args.lpips_crop_border, color_order='bgr')
         # -----------------------
         # calculate PSNR
         # -----------------------
@@ -203,21 +218,34 @@ def main(json_path='options/test_srsc_rsflow_multi_distillv2_psnr.json'):
             # if j == 0:
         current_psnr = current_psnr / len(E_img)
         current_ssim = current_ssim / len(E_img)
+        if lpips_model is not None:
+            current_lpips = current_lpips / len(E_img)
             # else:
             #     current_psnr = current_psnr + util.calculate_psnr(E_img[j], H_img[j], border=border)
         # current_psnr = current_psnr / len(E_img)
 
-        logger.info('{:->4d}--> {:>10s} | {:<4.3f}dB  {:.4f}'.format(idx, image_name_ext, current_psnr, current_ssim))
+        if lpips_model is not None:
+            logger.info('{:->4d}--> {:>10s} | {:<4.3f}dB  {:.4f}  LPIPS {:.4f}'.format(
+                idx, image_name_ext, current_psnr, current_ssim, current_lpips))
+        else:
+            logger.info('{:->4d}--> {:>10s} | {:<4.3f}dB  {:.4f}'.format(
+                idx, image_name_ext, current_psnr, current_ssim))
 
         avg_psnr += current_psnr
         avg_ssim += current_ssim
+        if lpips_model is not None:
+            avg_lpips += current_lpips
 
     avg_psnr = avg_psnr / idx
     avg_ssim = avg_ssim / idx
+    if lpips_model is not None:
+        avg_lpips = avg_lpips / idx
 
     # testing log
     logger.info('Average PSNR : {:<.3f}dB\n'.format(avg_psnr))
     logger.info('Average SSIM : {:<.4f}\n'.format(avg_ssim))
+    if lpips_model is not None:
+        logger.info('Average LPIPS : {:<.4f}\n'.format(avg_lpips))
 
 if __name__ == '__main__':
     
