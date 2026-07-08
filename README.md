@@ -15,8 +15,12 @@ https://github.com/user-attachments/assets/f9249552-d150-4dfa-ad7d-87d739244716
 
 ### Prerequisites
 - Python >= 3.8, PyTorch >= 1.7.0
-- Requirements: opencv-python, numpy, matplotlib, imageio, scikit-image, tqdm
+- Requirements: opencv-python, numpy, matplotlib, imageio, scikit-image, tqdm, lpips, pyiqa
 
+Install PyTorch with the CUDA version that matches your machine, then install the remaining packages:
+```
+pip install -r requirements.txt
+```
 
 ### Datasets
 Please download the RS-GOPRO datasets from [GoogleDrive](https://drive.google.com/file/d/1Txq0tU-1r3T2TjN-DQIe7YHyqwv9rCma/view) or [BaiduDisk](https://pan.baidu.com/s/1LNjrFYJJAUgt3H4ZUumOJw?pwd=vsad)(password: vsad).
@@ -65,6 +69,8 @@ Please download the RS-GOPRO datasets from [GoogleDrive](https://drive.google.co
         |--video n
 ```
 
+For real RS data without GT, use the format shown in `real_demo`.
+
 ## Download Pre-trained Model of SelfDRSC++
 Please download the pre-trained RIFE from [BaiduDisk](https://pan.baidu.com/s/1RjLN2yOix94hg7m35HIFPA?pwd=b4kg)(password:b4kg) or [GoogleDrive](https://drive.google.com/drive/folders/1x1JSjlNzL1LfrgqxaEakVHrQDxxNVUjB?usp=sharing). Please put these models to `./pretrained`.
 Our results on the RS-GOPRO datasets and real demos can also be downloaded from [BaiduDisk](https://pan.baidu.com/s/1J9PjilYK522aEzoCsl96sg?pwd=gbfn)(password:gbfn).
@@ -75,14 +81,14 @@ Our results on the RS-GOPRO datasets and real demos can also be downloaded from 
 ```
 python -m torch.distributed.launch --nproc_per_node=1 --master_port=1234 test.py --opt options/test_amt_rife_dr_rsflow_multi_psnr.json  --dist True
 ```
-Please change `data_root` and `pretrained_netG` in options according to yours.
+Please change `data_root` and `pretrained_netG` in options according to yours. To compute LPIPS during inference, add `--calc_lpips`.
 
 1.Testing on real RS data:
 ```
 python -m torch.distributed.launch --nproc_per_node=1 --master_port=1234 test_real.py --opt options/test_amt_rife_dr_rsflow_multi_real.json  --dist True
 ```
 Please change `data_root` and `pretrained_netG` in options according to yours.
-If you test on your own data, remember to change `self.H` and `self.W` in `./data/dataset_rsgopro_self_real.py`， They correspond to the height and width of the images respectively. If you want to generate a higher frame rate, you can change `test {'frames'}` in the JSON file.
+If you test on your own data, remember to change `self.H` and `self.W` in `./data/dataset_rsgopro_self_real.py`， They correspond to the height and width of the images respectively. If you want to generate a higher frame rate, you can change `test {'frames'}` in the JSON file. To compute no-reference metrics during real-data inference, add `--calc_nr_metrics`.
 
 ### 2) Training
 ```
