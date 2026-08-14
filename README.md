@@ -103,7 +103,7 @@ If you use any part of our code, or SelfDRSC++ is useful for your research, plea
   title={SelfDRSC++: Self-Supervised Dual Reversed Rolling Shutter Correction via Video Interpolation},
   author={Shang, Wei and Ren, Dongwei and Zhang, Wanying and Wang, Qilong and Zhu, Pengfei and Zuo, Wangmeng},
   journal={arXiv preprint arXiv:2408.11411},
-  year={2024}
+  year={2026}
 }
 @inproceedings{shang2023self,
   title={Self-supervised Learning to Bring Dual Reversed Rolling Shutter Images Alive},
