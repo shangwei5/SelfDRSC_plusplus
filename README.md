@@ -1,5 +1,4 @@
-# SelfDRSC++: Self-Supervised Learning for Dual Reversed Rolling Shutter Correction
-Under Review
+# SelfDRSC++: Self-Supervised Dual Reversed Rolling Shutter Correction via Video Interpolation (Pattern Recognition 2026)
 ---
 [[arXiv](https://arxiv.org/abs/2408.11411)]
 
@@ -101,7 +100,7 @@ Please change `data_root` and `pretrained_rsg` in options according to yours.
 If you use any part of our code, or SelfDRSC++ is useful for your research, please consider citing:
 ```
 @article{shang2024selfdrsc++,
-  title={SelfDRSC++: Self-Supervised Learning for Dual Reversed Rolling Shutter Correction},
+  title={SelfDRSC++: Self-Supervised Dual Reversed Rolling Shutter Correction via Video Interpolation},
   author={Shang, Wei and Ren, Dongwei and Zhang, Wanying and Wang, Qilong and Zhu, Pengfei and Zuo, Wangmeng},
   journal={arXiv preprint arXiv:2408.11411},
   year={2024}
