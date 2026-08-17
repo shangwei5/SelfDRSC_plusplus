@@ -1,6 +1,6 @@
 # SelfDRSC++: Self-Supervised Dual Reversed Rolling Shutter Correction via Video Interpolation (Pattern Recognition 2026)
 ---
-[[arXiv](https://arxiv.org/abs/2408.11411)]
+[[arXiv](https://arxiv.org/abs/2408.11411)] [[Elsevier](https://www-sciencedirect-com.libproxy.smu.edu.sg/science/article/pii/S0031320326016006)]
 
 This repository is the official PyTorch implementation of SelfDRSC++: Self-supervised Learning for Dual Reversed Rolling Shutter Correction.
 
@@ -99,11 +99,13 @@ Please change `data_root` and `pretrained_rsg` in options according to yours.
 ## Cite
 If you use any part of our code, or SelfDRSC++ is useful for your research, please consider citing:
 ```
-@article{shang2024selfdrsc++,
-  title={SelfDRSC++: Self-Supervised Dual Reversed Rolling Shutter Correction via Video Interpolation},
+@article{shang2026selfdrsc++,
+  title={SelfDRSC++: Self-supervised dual reversed rolling shutter correction via video interpolation},
   author={Shang, Wei and Ren, Dongwei and Zhang, Wanying and Wang, Qilong and Zhu, Pengfei and Zuo, Wangmeng},
-  journal={arXiv preprint arXiv:2408.11411},
-  year={2026}
+  journal={Pattern Recognition},
+  pages={114636},
+  year={2026},
+  publisher={Elsevier}
 }
 @inproceedings{shang2023self,
   title={Self-supervised Learning to Bring Dual Reversed Rolling Shutter Images Alive},
